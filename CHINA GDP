@@ -1,0 +1,48 @@
+CHINA GDP
+
+
+import pandas as pd
+data=pd.read_csv('china_gdp.csv')
+print(data)
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+from sklearn.metrics import r2_score
+data=pd.read_csv('china_gdp.csv')
+x_data = data["Year"]
+y_data = data["Value"]
+def logistic(x, a, b, c):
+    return a / (1 + np.exp(-b * (x - c)))
+p0 = [max(y_data), 0.03, 1990]
+params, _ = curve_fit(logistic, x_data, y_data, p0)
+a, b, c = params
+print(f"Fitted parameters: a={a:.2f}, b={b:.4f}, c={c:.2f}")
+
+
+# predict and evaluate
+y_pred = logistic(x_data, a, b, c)
+r2 = r2_score(y_data, y_pred)
+print(f"R2 score: {r2:.4f}")
+
+
+plt.figure(figsize=(9,6))
+plt.scatter(x_data,y_data, color='red',label="actual data")
+plt.plot(x_data,y_pred,color='blue', linewidth= 2, label="predicted logistic model")
+plt.title("china gdp(1960-2014): actual vs predicted")
+plt.xlabel("year")
+plt.ylabel("gdp (in billions)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+plt.figure(figsize=(7,6))
+plt.scatter(y_data, y_pred, color='green', alpha=0.7)
+plt.plot([y_data.min(),y_data.max()], [y_data.min(), y_data.max()], 'r--')
+plt.title("actual vs predicted gdp values")
+plt.xlabel("actual gdp")
+plt.ylabel("predicted gdp")
+plt.grid(True)
+plt.show()
