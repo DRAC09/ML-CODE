@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+import seaborn as sns
+
+# Generate a multi-class classification dataset
+x,y=make_classification(n_samples=700, n_features=10, n_classes=7, n_informative=7,  random_state=42)
+
+# Split the dataset into training and testing sets
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=42)
+
+# Train a Logistic Regression model
+model=LogisticRegression(max_iter=2000)
+model.fit(x_train,y_train)
+
+# Make predictions on the test set
+y_pred=model.predict(x_test)
+
+
+cm=confusion_matrix(y_test, y_pred)
+
+#plot confusion matrix
+plt.figure(figsize=(8,6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Reds', xticklabels=range(7), yticklabels=range(7))
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('7x7 Confusion Matrix')
+plt.show()
+
+#Metrics
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Precision:", precision_score(y_test, y_pred, average='macro'))
+print("Recall:", recall_score(y_test, y_pred, average='macro'))
+print("F1 Score:", f1_score(y_test, y_pred, average='macro'))
+
+print("\nDetailed Classification Report (per class):")
+print(classification_report(y_test, y_pred))
